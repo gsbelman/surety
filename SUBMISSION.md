@@ -1,6 +1,6 @@
 # DoraHacks submission: Arc Microgrants
 
-Paste these fields into DoraHacks. Replace each `[placeholder]`.
+Paste these fields into DoraHacks. One placeholder remains: `[video link]`, after you record the video.
 
 ## Name
 
@@ -22,17 +22,17 @@ Each result goes into an onchain record. An agent reads the seller's reliability
 
 The same contract covers a human case: pay-for-a-reply. A payment to a person refunds itself if the person does not reply in time.
 
-Arc fits this design. Sub-second finality makes per-call escrow fast. A gas fee near $0.001 keeps small payments worthwhile. USDC as gas means an agent needs one balance only.
+Arc fits this design. Sub-second finality makes per-call escrow fast. Each demo transaction cost about $0.002 in gas on mainnet, so small payments stay worthwhile. USDC as gas means an agent needs one balance only.
 
 ## How Arc Studio was used
 
-**[CONFIRM AFTER `scripts/studio.sh`. Keep only what happened. Do not submit this paragraph unchecked.]**
+We wrote the first version of SuretyEscrow, its Foundry tests, and the app in a local project, then imported the public repository into Arc Studio. In Studio, we ran the test suite and a full audit of the contract (see `contracts/AUDIT.md`). The audit found 8 issues. Studio fixed one High issue: an arbiter could still rule after its deadline. We adopted that fix before mainnet. We accepted the other findings, and README "Known limits" lists the main ones. Studio added 61 tests, so the suite grew from 56 to 117 tests, and all pass. Studio deployed the fixed contract to Arc testnet at [`0x2082c43eA0CCba46a12b62e425b40E798be16675`](https://explorer.testnet.arc.io/address/0x2082c43eA0CCba46a12b62e425b40E798be16675) and wired the React app into the Studio preview.
 
-We wrote the first version of SuretyEscrow and its Foundry tests in a local project, then imported the public repository into Arc Studio. In Studio, we ran the test suite, ran an audit of the contract (see `contracts/AUDIT.md`), extended the tests, deployed to Arc testnet with the built-in faucet, and ran the React app in the Studio preview against the testnet contract. Arc Studio does not deploy to mainnet, so `scripts/mainnet.sh` deploys the same source to mainnet with Arc Foundry.
+Two Studio steps did not finish. The testnet faucet refused the account, so the full testnet flow did not run in Studio. Studio also could not see its own preview, so it did not confirm that the app shows live events there. Arc Studio does not deploy to mainnet, so `scripts/mainnet.sh` deployed the same source to mainnet with Arc Foundry. The full flow ran there, with 26 real transactions.
 
 ## Links
 
-- Arc Studio project: [https://studio.arc.io/app/...]
+- Arc Studio project: https://studio.arc.io/app/6c3d23f8-e939-4065-8dc8-a6d2cd9cb612
 - Live app: https://surety-arc.pages.dev
 - Public repository: https://github.com/gsbelman/surety
 - Video: [video link]
@@ -78,14 +78,16 @@ We wrote the first version of SuretyEscrow and its Foundry tests in a local proj
 | settle payment 6 | [`0x11ca9cfc54f22f0522e6982b993f7c07d4519e74bc1635f04a4a9eda780563af`](https://explorer.arc.io/tx/0x11ca9cfc54f22f0522e6982b993f7c07d4519e74bc1635f04a4a9eda780563af) |
 <!-- MAINNET:END -->
 
+The contract source is verified on the explorer (exact match). All 27 transactions succeeded. Total gas was 0.1153 USDC.
+
 ## Video script (2 minutes)
 
-Record the screen. Run `SURETY_NETWORK=mainnet npm run demo` live in shot 4, or use the recorded terminal output of `scripts/mainnet.sh`.
+Record the screen. Run `SURETY_NETWORK=mainnet npm run demo` live in shot 4, or use the recorded output in [`agent/runs/mainnet-output.txt`](agent/runs/mainnet-output.txt).
 
 | Time | Screen | Voice |
 | :- | :- | :- |
 | 0:00-0:15 | An x402 call that takes payment and returns an error | "Agents pay per call with x402. If the API takes the money and returns nothing, the agent has no refund." |
-| 0:15-0:35 | Arc Studio workspace: chat history, `SuretyEscrow.sol`, test run, audit | "Surety is one contract, built and tested in Arc Studio. Sellers post a bond. Buyers pay into escrow." |
+| 0:15-0:35 | Arc Studio workspace: chat history, `SuretyEscrow.sol`, test run, audit | "Surety is one contract. Arc Studio audited it, fixed a bug, and doubled the tests. Sellers post a bond. Buyers pay into escrow." |
 | 0:35-0:50 | App: Buyer tab, click "Demo: honest seller", then "Demo: bad seller" | "Before an agent pays, it reads the seller's record onchain. This seller delivered every job. This one did not." |
 | 0:50-1:25 | Terminal: the agent demo, scenes 1, 3, and 4 | "The agent pays. The honest API delivers, and the hash matches. The silent API never delivers: settle refunds the agent plus a penalty. The lying API serves junk: the hash fails, the agent objects, and it gets refund plus penalty." |
 | 1:25-1:35 | Terminal: scene 5 | "Now the score is zero, so the agent refuses to pay. No human stepped in." |

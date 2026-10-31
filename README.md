@@ -2,7 +2,9 @@
 
 Bonded, self-settling USDC payments for AI agents and humans on [Arc](https://docs.arc.io).
 
-**Live app:** https://surety-arc.pages.dev (a preview until the contract goes live on Arc mainnet)
+**Live app:** https://surety-arc.pages.dev (reads the live contract on Arc mainnet)
+
+**Contract:** [`0x2f10d55cfd39eccc7f86ba95d7d0026799fc67f3`](https://explorer.arc.io/address/0x2f10d55cfd39eccc7f86ba95d7d0026799fc67f3?tab=contract) on Arc mainnet, source verified
 
 ## The problem
 
@@ -132,13 +134,19 @@ sequenceDiagram
 | settle payment 6 | [`0x11ca9cfc54f22f0522e6982b993f7c07d4519e74bc1635f04a4a9eda780563af`](https://explorer.arc.io/tx/0x11ca9cfc54f22f0522e6982b993f7c07d4519e74bc1635f04a4a9eda780563af) |
 <!-- MAINNET:END -->
 
+The mainnet source is verified on the explorer (exact match). All 27 transactions succeeded, and total gas was 0.1153 USDC. Each demo transaction cost about 0.002 USDC. The full terminal output is in [`agent/runs/mainnet-output.txt`](agent/runs/mainnet-output.txt).
+
 <!-- TESTNET:START -->
-Testnet values appear here after `scripts/testnet.sh` runs.
+**Arc Testnet** (deployed from Arc Studio)
+
+- SuretyEscrow: [`0x2082c43eA0CCba46a12b62e425b40E798be16675`](https://explorer.testnet.arc.io/address/0x2082c43eA0CCba46a12b62e425b40E798be16675)
+- Deployment: [`0x4b920f933f5d3279ad0feb5545e3da45dbb8d86e8a32b23c8766b76628290327`](https://explorer.testnet.arc.io/tx/0x4b920f933f5d3279ad0feb5545e3da45dbb8d86e8a32b23c8766b76628290327)
+- The runtime bytecode matches the mainnet source. No demo flow ran on testnet, because the Studio faucet refused the account.
 <!-- TESTNET:END -->
 
 ## How Arc Studio was used
 
-See [SUBMISSION.md](SUBMISSION.md) and [STUDIO_STEPS.md](STUDIO_STEPS.md).
+The [Studio workspace](https://studio.arc.io/app/6c3d23f8-e939-4065-8dc8-a6d2cd9cb612) holds the audit, the extra tests, and the testnet deployment. See [SUBMISSION.md](SUBMISSION.md), [STUDIO_STEPS.md](STUDIO_STEPS.md), and [contracts/AUDIT.md](contracts/AUDIT.md).
 
 ## Run it
 
