@@ -41,8 +41,11 @@ export function requireEscrow(network: Network): Address {
   return network.address;
 }
 
+/** The public RPC answers HTTP 429 under load. This waits up to 15 seconds and sends again. */
+const transportFor = (network: Network) => http(network.rpcUrl, { retryCount: 5, retryDelay: 500 });
+
 export function publicClientFor(network: Network): PublicClient {
-  return createPublicClient({ chain: network.chain, pollingInterval: 1_000, transport: http(network.rpcUrl) });
+  return createPublicClient({ chain: network.chain, pollingInterval: 1_000, transport: transportFor(network) });
 }
 
 export type Actor = {
@@ -55,7 +58,7 @@ export function actor(network: Network, envName: string, name: string): Actor {
   const key = process.env[`${envName}_PRIVATE_KEY`];
   if (!key) throw new Error(`Missing ${envName}_PRIVATE_KEY in .env.`);
   const account = privateKeyToAccount(key as `0x${string}`);
-  const wallet = createWalletClient({ account, chain: network.chain, transport: http(network.rpcUrl) });
+  const wallet = createWalletClient({ account, chain: network.chain, transport: transportFor(network) });
   return { name, account, wallet };
 }
 

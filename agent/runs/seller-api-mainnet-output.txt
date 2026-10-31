@@ -1,0 +1,79 @@
+Seller API calls on Arc Mainnet. Escrow 0x2f10d55cfd39eccc7f86ba95d7d0026799fc67f3, seller 0x1614E03f4f896065051649E06E7Fe07719b48fc0, API http://127.0.0.1:8790.
+Agent 0.463154 USDC, seller 0.302443 USDC, seller free bond 1 USDC.
+Worst case: 0.1 USDC of the 0.3 USDC limit.
+Seller record before: {
+  reliabilityPct: 100,
+  delivered: '3',
+  refunded: '0',
+  objected: '0',
+  declined: '0',
+  bond: '1 USDC'
+}
+
+=== Call 1: the buyer verifies the result and releases
+  HTTP 402: price 0.02 USDC, 60 s to deliver
+  score: 100% over 3 payments, 0 refunded, 0 objected, bond 1 USDC
+  policy: pay (reliability is above the floor)
+  tx agent pays through Surety: https://explorer.arc.io/tx/0x830367ccf597d4a5067308a9e53a9f949c0001b34bc8f4b16ff5799c4d30c4ea
+  paid 0.02 USDC, payment id 7
+  HTTP 200: {"address":"0x2F10d55CFd39ECCC7F86BA95d7d0026799FC67f3","network":"mainnet","block":"28808535","usdcBaseUnits":"1259000","usdc":"1.259","isContract":true,"txCount":1}
+  proof check: keccak256(response) matches the onchain proof
+  data check: balance matches the chain at block 28808535
+Run stopped: Request exceeds defined limit. (HTTP 429 from the public RPC on release of payment 7)
+
+--- Server log for this run
+  tx seller API delivers payment 7: https://explorer.arc.io/tx/0x0ad8093a140eb647d6bd71c07245ade9a832db065c231ffc0778c69e60078b67
+
+--- The agent released payment 7 after the retry fix:
+  tx agent releases payment 7: https://explorer.arc.io/tx/0x17085116c4dd4d88b059952aafe8463453c0a3d630f0754ea64bff32c89fda13
+
+--- Second run: FROM_CALL=2
+Seller API calls on Arc Mainnet. Escrow 0x2f10d55cfd39eccc7f86ba95d7d0026799fc67f3, seller 0x1614E03f4f896065051649E06E7Fe07719b48fc0, API http://127.0.0.1:8790.
+Agent 0.437245 USDC, seller 0.321197 USDC, seller free bond 1 USDC.
+Worst case: 0.1 USDC of the 0.3 USDC limit.
+Seller record before: {
+  reliabilityPct: 100,
+  delivered: '4',
+  refunded: '0',
+  objected: '0',
+  declined: '0',
+  bond: '1 USDC'
+}
+
+=== Call 2: the buyer stays silent, so the server settles and collects
+  HTTP 402: price 0.02 USDC, 60 s to deliver
+  score: 100% over 4 payments, 0 refunded, 0 objected, bond 1 USDC
+  policy: pay (reliability is above the floor)
+  tx agent pays through Surety: https://explorer.arc.io/tx/0x17df13ff33caf620d3df6810dbb49e2f34448ac524a783a1213dede0c4c390a0
+  paid 0.02 USDC, payment id 8
+  HTTP 200: {"address":"0x1614E03f4f896065051649E06E7Fe07719b48fc0","network":"mainnet","block":"28809284","usdcBaseUnits":"321197","usdc":"0.321197","isContract":false,"txCount":7}
+  buyer does nothing. Waiting for the objection window on the chain clock...
+  tx server settles: https://explorer.arc.io/tx/0xd71e1a061eaa75a90426a9e20ea2056ead34831c70ede3d3ecb21129415f12ae
+
+=== Call 3: a payment with no API call, so the server declines it before the deadline
+  HTTP 402: price 0.02 USDC, 60 s to deliver
+  score: 100% over 5 payments, 0 refunded, 0 objected, bond 1 USDC
+  policy: pay (reliability is above the floor)
+  tx agent pays through Surety: https://explorer.arc.io/tx/0x44525627cbd7b0b4b22706a7d1d2584a5e5948500b80e3976c8c3d90803c863b
+  paid 0.02 USDC, payment id 9
+  buyer never calls the API. The deadline is 60 s away...
+  tx server declines: https://explorer.arc.io/tx/0x0ed89f28b22f9faf49c931bb520978626c81e134f6e6d9360d8f80f27a528253
+
+=== Result
+Seller record after: {
+  reliabilityPct: 100,
+  delivered: '5',
+  refunded: '0',
+  objected: '0',
+  declined: '1',
+  bond: '1 USDC'
+}
+Agent 0.437245 USDC -> 0.408614 USDC.
+Seller 0.321197 USDC -> 0.336821 USDC.
+Seller free bond 1 USDC -> 1 USDC.
+Paid into escrow 0.04 USDC. Net cost in gas 0.013007 USDC.
+
+--- Server log for this run
+  tx seller API delivers payment 8: https://explorer.arc.io/tx/0xc0f2f7ae8b2d6d72ed6e89ca256d14db307b904ed830564ff4d6ddc8741d006b
+  tx seller API settles payment 8: https://explorer.arc.io/tx/0xd71e1a061eaa75a90426a9e20ea2056ead34831c70ede3d3ecb21129415f12ae
+  tx seller API declines payment 9: https://explorer.arc.io/tx/0x0ed89f28b22f9faf49c931bb520978626c81e134f6e6d9360d8f80f27a528253

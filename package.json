@@ -10,6 +10,8 @@
     "test:contracts": "cd contracts && arc-forge test",
     "sync-abi": "node scripts/sync-abi.mjs",
     "demo": "npm run demo -w agent",
-    "seller": "npm run seller -w agent"
+    "seller": "npm run seller -w agent",
+    "seller-api": "npm run seller-api -w agent",
+    "seller-api:calls": "npm run seller-api:calls -w agent"
   }
 }

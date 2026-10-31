@@ -13,4 +13,5 @@ contracts/broadcast/*/31337/
 *.log
 BRIEF.md
 agent/runs/local.json
+agent/runs/seller-api-local.json
 studio-output

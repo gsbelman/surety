@@ -1,0 +1,139 @@
+{
+  "runs": [
+    {
+      "at": "2026-10-31T11:16:47.136Z",
+      "network": "mainnet",
+      "escrow": "0x2f10d55cfd39eccc7f86ba95d7d0026799fc67f3",
+      "seller": "0x1614E03f4f896065051649E06E7Fe07719b48fc0",
+      "buyer": "0x59D111DD9b34cC0df1955B02d8ed09B2052eFC3e",
+      "price": "0.02 USDC",
+      "paidIntoEscrow": "0.02 USDC",
+      "balances": {
+        "agent": {
+          "before": "0.463154 USDC",
+          "after": "0.438838 USDC"
+        },
+        "seller": {
+          "before": "0.302443 USDC",
+          "after": "0.301197 USDC"
+        }
+      },
+      "sellerRecord": {
+        "before": {
+          "reliabilityPct": 100,
+          "delivered": "3",
+          "refunded": "0",
+          "objected": "0",
+          "declined": "0",
+          "bond": "1 USDC"
+        },
+        "after": {
+          "delivered": "4",
+          "refunded": "0",
+          "objected": "0",
+          "declined": "0",
+          "bond": "1 USDC"
+        }
+      },
+      "calls": [
+        {
+          "name": "Buyer verifies and releases",
+          "target": "0x2f10d55cfd39eccc7f86ba95d7d0026799fc67f3",
+          "paymentId": "7",
+          "outcome": "seller paid",
+          "steps": [
+            {
+              "label": "agent pays through Surety",
+              "hash": "0x830367ccf597d4a5067308a9e53a9f949c0001b34bc8f4b16ff5799c4d30c4ea"
+            },
+            {
+              "label": "server delivers the hash",
+              "hash": "0x0ad8093a140eb647d6bd71c07245ade9a832db065c231ffc0778c69e60078b67"
+            },
+            {
+              "label": "agent releases",
+              "hash": "0x17085116c4dd4d88b059952aafe8463453c0a3d630f0754ea64bff32c89fda13"
+            }
+          ]
+        }
+      ],
+      "stoppedWith": "HTTP 429 from the public RPC on release. The agent released after the retry fix."
+    },
+    {
+      "at": "2026-10-31T11:24:30.333Z",
+      "network": "mainnet",
+      "escrow": "0x2f10d55cfd39eccc7f86ba95d7d0026799fc67f3",
+      "seller": "0x1614E03f4f896065051649E06E7Fe07719b48fc0",
+      "buyer": "0x59D111DD9b34cC0df1955B02d8ed09B2052eFC3e",
+      "price": "0.02 USDC",
+      "stoppedWith": null,
+      "paidIntoEscrow": "0.04 USDC",
+      "balances": {
+        "agent": {
+          "before": "0.437245 USDC",
+          "after": "0.408614 USDC"
+        },
+        "seller": {
+          "before": "0.321197 USDC",
+          "after": "0.336821 USDC"
+        }
+      },
+      "sellerRecord": {
+        "before": {
+          "reliabilityPct": 100,
+          "delivered": "4",
+          "refunded": "0",
+          "objected": "0",
+          "declined": "0",
+          "bond": "1 USDC"
+        },
+        "after": {
+          "reliabilityPct": 100,
+          "delivered": "5",
+          "refunded": "0",
+          "objected": "0",
+          "declined": "1",
+          "bond": "1 USDC"
+        }
+      },
+      "calls": [
+        {
+          "name": "Buyer stays silent, seller collects",
+          "target": "0x1614E03f4f896065051649E06E7Fe07719b48fc0",
+          "paymentId": "8",
+          "outcome": "seller paid",
+          "steps": [
+            {
+              "label": "agent pays through Surety",
+              "hash": "0x17df13ff33caf620d3df6810dbb49e2f34448ac524a783a1213dede0c4c390a0"
+            },
+            {
+              "label": "server delivers the hash",
+              "hash": "0xc0f2f7ae8b2d6d72ed6e89ca256d14db307b904ed830564ff4d6ddc8741d006b"
+            },
+            {
+              "label": "server settles",
+              "hash": "0xd71e1a061eaa75a90426a9e20ea2056ead34831c70ede3d3ecb21129415f12ae"
+            }
+          ]
+        },
+        {
+          "name": "Payment with no call, server declines",
+          "target": "0x3600000000000000000000000000000000000000",
+          "paymentId": "9",
+          "outcome": "buyer refunded, no penalty",
+          "steps": [
+            {
+              "label": "agent pays through Surety",
+              "hash": "0x44525627cbd7b0b4b22706a7d1d2584a5e5948500b80e3976c8c3d90803c863b"
+            },
+            {
+              "label": "server declines",
+              "hash": "0x0ed89f28b22f9faf49c931bb520978626c81e134f6e6d9360d8f80f27a528253"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

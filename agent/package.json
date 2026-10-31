@@ -5,6 +5,8 @@
   "scripts": {
     "demo": "node --env-file-if-exists=../.env --import tsx src/demo.ts",
     "seller": "node --env-file-if-exists=../.env --import tsx src/seller.ts",
+    "seller-api": "node --env-file-if-exists=../.env --import tsx seller-api/server.ts",
+    "seller-api:calls": "node --env-file-if-exists=../.env --import tsx seller-api/calls.ts",
     "fund": "node --env-file-if-exists=../.env --import tsx src/fund.ts",
     "report": "node --env-file-if-exists=../.env --import tsx src/report.ts",
     "typecheck": "tsc --noEmit"
