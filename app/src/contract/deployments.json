@@ -1,10 +1,13 @@
 {
   "mainnet": {
-    "address": null,
-    "deployBlock": 0,
-    "deployTx": null,
-    "lastDemoBlock": 0,
-    "sellers": null
+    "address": "0x2f10d55cfd39eccc7f86ba95d7d0026799fc67f3",
+    "deployBlock": 28801449,
+    "deployTx": "0x47efbd44a5fd531bcd8cd9b28356f71a529fb34162cc76c8e0b5f92d1af951b1",
+    "lastDemoBlock": 28801707,
+    "sellers": {
+      "honest": "0x1614E03f4f896065051649E06E7Fe07719b48fc0",
+      "bad": "0x741972f20b169Cb6310c40F73eE8A19577AaF1ed"
+    }
   },
   "testnet": {
     "address": "0x2082c43eA0CCba46a12b62e425b40E798be16675",

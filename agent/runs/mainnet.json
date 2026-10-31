@@ -1,0 +1,140 @@
+{
+  "runs": [
+    {
+      "at": "2026-10-31T10:19:03.931Z",
+      "escrow": "0x2f10d55cfd39eccc7f86ba95d7d0026799fc67f3",
+      "txs": [
+        {
+          "label": "deployer funds AGENT",
+          "hash": "0x765cdb36a14759600d549dba61fd9c7b2fa985916a7f132d4cdb6955a673769f",
+          "from": "0x84487909fe800Fdc610a2489D5b17496D6aa8a4f"
+        },
+        {
+          "label": "deployer funds SELLER",
+          "hash": "0x4847b1406a9528a533f7afcc2082f773f9d211df9f83322dc9d8324befbf4032",
+          "from": "0x84487909fe800Fdc610a2489D5b17496D6aa8a4f"
+        },
+        {
+          "label": "deployer funds BAD_SELLER",
+          "hash": "0xfb76bcc427211f2cf160b22ed877efa3d397891bef34c8a1c1af711963f9c3ee",
+          "from": "0x84487909fe800Fdc610a2489D5b17496D6aa8a4f"
+        },
+        {
+          "label": "honest seller registers",
+          "hash": "0xecfe1ca497bc5ab2ba04bef2c85c033b3fa866ff1d32661fb9440509ce9ca27c",
+          "from": "0x1614E03f4f896065051649E06E7Fe07719b48fc0"
+        },
+        {
+          "label": "honest seller approves bond",
+          "hash": "0x683f2be64735025001e6b4e909c4f4cb061ecf058c6e34f41c4a65821175eaca",
+          "from": "0x1614E03f4f896065051649E06E7Fe07719b48fc0"
+        },
+        {
+          "label": "honest seller posts 1 USDC bond",
+          "hash": "0x5d1eaf0957d1d89750e607d005030f2de535c0c5b77d387ff5a888d459be0f4e",
+          "from": "0x1614E03f4f896065051649E06E7Fe07719b48fc0"
+        },
+        {
+          "label": "bad seller registers",
+          "hash": "0xb4cb33bcbf35196cdb7b9bf4ac79e9803437f805517033b29ab3f53433627129",
+          "from": "0x741972f20b169Cb6310c40F73eE8A19577AaF1ed"
+        },
+        {
+          "label": "bad seller approves bond",
+          "hash": "0x7ebb3ef8e266e99881c972f247e6f6d94045b8650dcc538bc7956c776c279fcd",
+          "from": "0x741972f20b169Cb6310c40F73eE8A19577AaF1ed"
+        },
+        {
+          "label": "bad seller posts 0.25 USDC bond",
+          "hash": "0x4e5c2e0c676822f642c16c56ed06dd6d5202487930aa662685c75ff95c98ad92",
+          "from": "0x741972f20b169Cb6310c40F73eE8A19577AaF1ed"
+        },
+        {
+          "label": "agent approves USDC",
+          "hash": "0x6c71aced2343f277042f69a955ad95ce8f290b524f7275fd2d39e44dcdce716f",
+          "from": "0x59D111DD9b34cC0df1955B02d8ed09B2052eFC3e"
+        },
+        {
+          "label": "agent pays through Surety",
+          "hash": "0x6bd5cbc7b663dcd6deb7b771c508991564fb227a5bfb5416d257b6abb7c54c5d",
+          "from": "0x59D111DD9b34cC0df1955B02d8ed09B2052eFC3e"
+        },
+        {
+          "label": "honest seller delivers payment 1",
+          "hash": "0x25e5e3c22b1dbc0a6ae187dad59987ce7c761939d8ce44b350293407c85f0c5a",
+          "from": "0x1614E03f4f896065051649E06E7Fe07719b48fc0"
+        },
+        {
+          "label": "agent releases payment 1",
+          "hash": "0xb6362577f1cca6796f97882c8496ce7186d2010f4beff50703e621d34c435ac6",
+          "from": "0x59D111DD9b34cC0df1955B02d8ed09B2052eFC3e"
+        },
+        {
+          "label": "agent pays through Surety",
+          "hash": "0x4adecf7dce92a8c2523b2e8dfa4f208b88d50a3e2aea9684a54874a8af53dcee",
+          "from": "0x59D111DD9b34cC0df1955B02d8ed09B2052eFC3e"
+        },
+        {
+          "label": "honest seller delivers payment 2",
+          "hash": "0x1f7717e0676a82e5b999aa63d5ad2ceec7b9b7cdba13a994a9ef161d25aa4322",
+          "from": "0x1614E03f4f896065051649E06E7Fe07719b48fc0"
+        },
+        {
+          "label": "settle payment 2",
+          "hash": "0xca472cafa636011fabc04c2fa3e20739770929877fdfb8026b70b38824800c6c",
+          "from": "0x59D111DD9b34cC0df1955B02d8ed09B2052eFC3e"
+        },
+        {
+          "label": "agent pays through Surety",
+          "hash": "0x349c3d3f13080ea202b9067f7492ab7edf9a5e10e68f7038316b2f0f33ee1f87",
+          "from": "0x59D111DD9b34cC0df1955B02d8ed09B2052eFC3e"
+        },
+        {
+          "label": "settle payment 3",
+          "hash": "0xc0b15a93d0e98e93f86412b5643a3e01dd2f275e535e8f05d16195b86b513020",
+          "from": "0x59D111DD9b34cC0df1955B02d8ed09B2052eFC3e"
+        },
+        {
+          "label": "agent pays through Surety",
+          "hash": "0xc09da5867017d5fdc23db8e7ca97cad1e8e4823c0ca0b569c431a4fdae07e7cb",
+          "from": "0x59D111DD9b34cC0df1955B02d8ed09B2052eFC3e"
+        },
+        {
+          "label": "bad seller delivers payment 4",
+          "hash": "0x68ec358115159337ed4b97e4ab31f2241371166ec2855014d1122c3c2b127445",
+          "from": "0x741972f20b169Cb6310c40F73eE8A19577AaF1ed"
+        },
+        {
+          "label": "agent objects to payment 4",
+          "hash": "0x29bd5b2417dac0a6349a08edcd1f2d084c7f5fc9087ccecfec0ea238499c6bfc",
+          "from": "0x59D111DD9b34cC0df1955B02d8ed09B2052eFC3e"
+        },
+        {
+          "label": "payer pays for a reply",
+          "hash": "0x70a2c0d30c2c70fe519b8c5f46c4fe4aa7841c687038238b9fd025eae64d2f8d",
+          "from": "0x59D111DD9b34cC0df1955B02d8ed09B2052eFC3e"
+        },
+        {
+          "label": "recipient replies to payment 5",
+          "hash": "0x22ff8b714a2cc1df31df6a9b45fa9350f7b046c834b75179624eb393bfe84ff3",
+          "from": "0x1614E03f4f896065051649E06E7Fe07719b48fc0"
+        },
+        {
+          "label": "agent releases payment 5",
+          "hash": "0xf3c0ccb528cf124e5fd9d90614a5614df900c16a6ec3dd0d8a233530ef45c40b",
+          "from": "0x59D111DD9b34cC0df1955B02d8ed09B2052eFC3e"
+        },
+        {
+          "label": "payer pays for a reply",
+          "hash": "0x8be088e398ddaee97fed4d9a1f56f33e27f4a3fe1f6c057ed6831476f3bd6eda",
+          "from": "0x59D111DD9b34cC0df1955B02d8ed09B2052eFC3e"
+        },
+        {
+          "label": "settle payment 6",
+          "hash": "0x11ca9cfc54f22f0522e6982b993f7c07d4519e74bc1635f04a4a9eda780563af",
+          "from": "0x59D111DD9b34cC0df1955B02d8ed09B2052eFC3e"
+        }
+      ]
+    }
+  ]
+}
