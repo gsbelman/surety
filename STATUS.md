@@ -2,6 +2,10 @@
 
 Last update: 2026-10-31. Everything that can run without a login or funds is done and verified. **Mainnet, the Studio work, and the public link are not done.** They need the morning steps below.
 
+## Summary
+
+The contract, tests, agent demo, app, and docs are finished and pushed to https://github.com/gsbelman/surety. They are verified on a local Arc node only. No mainnet transaction exists yet. Six morning steps remain.
+
 ## Morning steps, in order
 
 1. **Log in to Arc Studio:** `arc-studio login --paste`
@@ -27,15 +31,14 @@ If `scripts/mainnet.sh` prints a verification warning, upload `contracts/out/sta
 | Contract and tests | 56 of 56 tests pass, including 2 invariant suites of 8,192 calls | `cd contracts && arc-forge test` |
 | Test strength | 7 of 7 deliberate mutations made the suite fail (reentrancy guards, bond checks, deadlines) | Temporary source edits, then restored |
 | Agent demo | Full flow passes on a local Arc node: 26 transactions, 7 scenes, deployment through report | `scripts/local.sh` |
-| App | Production build passes. Browser test passes: 18 transactions through the real UI with an injected test wallet | `npm run build`, Playwright run (not in the repo) |
+| App | Production build passes. Browser test passes with no browser errors: 15 user actions through the real UI with an injected test wallet on a local Arc node | `npm run build`, Playwright run (not in the repo) |
+| Deadline race | Settle at the exact deadline: 1 failure in 22 before the fix, 0 failures in 30 after it | Playwright stress run (not in the repo) |
 | App flows covered | Register, bond in and out, pay, countdown, deliver, release, object, timeout settle, decoded contract error, pay-for-a-reply, live feed | Same browser test |
 | Mobile | No horizontal overflow at 390 px on each tab | Same browser test |
 | No wallet | Production build loads with no errors. Local network is hidden | `vite preview` with Playwright |
 | Unfunded guard | `scripts/mainnet.sh` stops before any spend | Ran with a 0 USDC deployer |
 | Secrets | `.env` is mode 600 and ignored. No private key appears in git history | `git log --all -p`, searched for each key |
-| Clean clone | Fresh clone installs, builds, and passes tests | See the final check below |
-
-Final check: `git clone`, `npm ci`, `npm run build`, `arc-forge test`.
+| Clean clone | Fresh clone installs, builds, typechecks, and passes tests | `git clone`, `npm ci`, `npm run build`, `tsc --noEmit`, `arc-forge test` |
 
 ## Blocked
 

@@ -7,9 +7,20 @@ import { Card } from "./ui";
 
 const STATUS = ["None", "Awaiting delivery", "Delivered", "With arbiter", "Released", "Refunded"];
 
-function PaymentRow({ payment, proofLabel }: { payment: Payment; proofLabel: string }) {
+/** A deadline passes when a block is later than it. One more second absorbs block jitter. */
+const SETTLE_MARGIN = 1;
+
+function PaymentRow({
+  payment,
+  proofLabel,
+  clockOffset,
+}: {
+  payment: Payment;
+  proofLabel: string;
+  clockOffset: number;
+}) {
   const { account, network, write } = useWallet();
-  const now = useNow();
+  const now = useNow() + clockOffset;
   const [proof, setProof] = useState("");
 
   const { id, status, amount, penalty } = payment;
@@ -18,7 +29,7 @@ function PaymentRow({ payment, proofLabel }: { payment: Payment; proofLabel: str
   const deadline = Number(status === 1 ? payment.deliverBy : payment.decideBy);
   const open = status >= 1 && status <= 3;
   const remaining = deadline - now;
-  const expired = open && remaining < 0;
+  const expired = open && remaining < -SETTLE_MARGIN;
 
   const contract = { address: network.address!, abi: suretyAbi };
   const act = (label: string, functionName: string, args: readonly unknown[]) =>
@@ -32,7 +43,7 @@ function PaymentRow({ payment, proofLabel }: { payment: Payment; proofLabel: str
         <span className={`badge s${status}`}>{STATUS[status]}</span>
         {open && (
           <span className={expired ? "timer expired" : "timer"}>
-            {expired ? "deadline passed" : countdown(remaining)}
+            {expired ? "deadline passed" : countdown(Math.max(remaining, 0))}
           </span>
         )}
       </div>
@@ -88,10 +99,15 @@ export function PaymentList({ title, proofLabel }: { title: string; proofLabel: 
   return (
     <Card title={title}>
       {failed && !data && <p className="notice">The RPC did not respond. Retrying.</p>}
-      {data?.length === 0 && <p className="hint">No payments yet.</p>}
+      {data?.payments.length === 0 && <p className="hint">No payments yet.</p>}
       <ul className="payments">
-        {data?.map((payment) => (
-          <PaymentRow key={payment.id.toString()} payment={payment} proofLabel={proofLabel} />
+        {data?.payments.map((payment) => (
+          <PaymentRow
+            key={payment.id.toString()}
+            payment={payment}
+            proofLabel={proofLabel}
+            clockOffset={data.clockOffset}
+          />
         ))}
       </ul>
     </Card>

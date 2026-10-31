@@ -92,9 +92,12 @@ export function usePayments() {
   const { client, network, account } = useWallet();
   const address = network.address;
   return usePoll(async () => {
-    if (!address || !account) return [];
+    if (!address || !account) return { payments: [], clockOffset: 0 };
     const read = { address, abi: suretyAbi } as const;
-    const last = await client.readContract({ ...read, functionName: "lastPaymentId" });
+    const [last, block] = await Promise.all([
+      client.readContract({ ...read, functionName: "lastPaymentId" }),
+      client.getBlock(),
+    ]);
     const first = last > PAYMENT_WINDOW ? last - PAYMENT_WINDOW + 1n : 1n;
     const ids: bigint[] = [];
     for (let id = last; id >= first; id--) ids.push(id);
@@ -105,7 +108,11 @@ export function usePayments() {
         ...(await client.readContract({ ...read, functionName: "getPayment", args: [id] })),
       })),
     );
-    return payments.filter((p) => p.buyer === account || p.seller === account);
+    return {
+      payments: payments.filter((p) => p.buyer === account || p.seller === account),
+      // The contract judges deadlines by the chain clock, not by the clock of this device.
+      clockOffset: Number(block.timestamp) - Math.floor(Date.now() / 1000),
+    };
   }, [address, account]);
 }
 

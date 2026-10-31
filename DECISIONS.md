@@ -33,13 +33,15 @@ Judgment calls made during the overnight build, 2026-10-31.
 21. **The RPC limits `eth_getLogs`.** A range of 1,000 blocks works and 10,000 fails. At 0.5 s per block, a full scan from deployment gets slow in days. The feed reads the last 20,000 blocks plus the known block range of the demo run, then follows the head. Payment lists read `getPayment` for the last 60 ids.
 22. **The mainnet explorer API returned 403 (Cloudflare).** The testnet API returned 200. `arc-forge verify-contract` can fail on mainnet. The script then writes `contracts/out/standard-input.json` for manual upload. A failure does not stop the demo.
 
+23. **The app reads deadlines from the chain clock.** The first version used the device clock, so the Settle button could appear before the chain passed the deadline. A stress test failed 1 click in 22 with `TooEarly`. The app now measures the offset to the latest block and adds a 1-second margin. The same test then passed 30 of 30. This also protects a device with a wrong clock.
+
 ## Scope and limits
 
-23. **Testnet deployment skipped.** The faucet at faucet.circle.com uses reCAPTCHA, and I did not try to bypass it. `arc-anvil` replaced it. Studio has a built-in faucet, so `scripts/studio.sh` deploys to testnet.
-24. **Vercel deployment skipped.** The Vercel CLI is not installed, so no CLI login exists. The brief allows deployment only with a CLI login. A Vercel connector is available in this session, but I followed the condition in the brief.
-25. **Arc Studio fallback used.** `arc-studio whoami` failed at the start and at the end of the run. I built locally and wrote `STUDIO_STEPS.md` and `scripts/studio.sh`.
-26. **The app has no arbiter screen.** An arbiter calls `resolve()` from the explorer. The demo does not use an arbiter.
-27. **The app forgets form input on a tab change.** This is acceptable for an MVP.
-28. **`BRIEF.md` is not in the public repo.** It is an internal note. It stays on disk, ignored by git.
-29. **Git identity.** The repo uses `gsbelman@users.noreply.github.com`, so no private email goes public.
-30. **No existing wallet used.** The session had a connected wallet service. I did not touch it, per the brief.
+24. **Testnet deployment skipped.** The faucet at faucet.circle.com uses reCAPTCHA, and I did not try to bypass it. `arc-anvil` replaced it. Studio has a built-in faucet, so `scripts/studio.sh` deploys to testnet.
+25. **Vercel deployment skipped.** The Vercel CLI is not installed, so no CLI login exists. The brief allows deployment only with a CLI login. A Vercel connector is available in this session, but I followed the condition in the brief.
+26. **Arc Studio fallback used.** `arc-studio whoami` failed at the start and at the end of the run. I built locally and wrote `STUDIO_STEPS.md` and `scripts/studio.sh`.
+27. **The app has no arbiter screen.** An arbiter calls `resolve()` from the explorer. The demo does not use an arbiter.
+28. **The app forgets form input on a tab change.** This is acceptable for an MVP.
+29. **`BRIEF.md` is not in the public repo.** It is an internal note. It stays on disk, ignored by git.
+30. **Git identity.** The repo uses `gsbelman@users.noreply.github.com`, so no private email goes public.
+31. **No existing wallet used.** The session had a connected wallet service. I did not touch it, per the brief.
