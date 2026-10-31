@@ -70,3 +70,17 @@ Judgment calls made during the overnight build, 2026-10-31.
 45. **The gas claim now uses measured data.** `SUBMISSION.md` said "near $0.001." The mainnet average was 0.0021 USDC per demo transaction, so the text now says "about $0.002." Deployment cost 0.0602 USDC.
 46. **A video line changed.** The script said the contract was "built and tested in Arc Studio." It was built locally and then imported, so the line now names what Studio did.
 47. **The demo output is in the repo.** `agent/runs/mainnet-output.txt` holds the terminal output for the video, because the log in `/tmp` does not last.
+
+## Final push
+
+48. **Surety is a settlement layer, not a marketplace.** The pitch now leads with "sellers post collateral, and failure costs them" and "silence pays the seller, failure pays the buyer, anyone can settle." The contract did not change.
+49. **The comparison uses primary sources.** Tolly facts come from its contract and `GET /v1/acp`. Arcurrent facts come from `MandateEscrow.sol`. vet402, SiteCheck, and ShwUp facts come from their READMEs. I read all of these on 2026-10-31.
+50. **Round 1 status of vet402 and SiteCheck comes from Oscar.** The DoraHacks winners page did not render, so I could not confirm these two. Arcurrent and ShwUp state the award in their own READMEs.
+51. **"Plug in" names the x402 gap.** The seller API uses an HTTP 402 flow in the style of x402, with a Surety header. It does not use the x402 wire format or a facilitator. The docs say so.
+52. **The demo record carries a disclosure.** All mainnet activity comes from this project's wallets, so the docs say that the record does not show outside demand.
+53. **The seller API sells an address report.** The work is real and reads chain data, and a buyer can check the result independently. A URL checker would add a server-side request risk for no gain.
+54. **The server declines a payment with no matching call.** Without this, anyone can pay the seller, wait for the deadline, and collect the penalty (SE-03). The contract allows this and cannot change, so the server closes the gap while it runs.
+55. **The server settles its own deliveries.** "Silence pays the seller" needs a caller for `settle`, and the seller has the reason to call it.
+56. **The seller API does not run `agent/src/report.ts`.** That script writes `app/src/contract/deployments.json`, and this work must not touch `app/`. The run log is in `agent/runs/seller-api-mainnet.json`. The two seller lines in the generated MAINNET sections were edited by hand from `sellerStats`.
+57. **An objection needs a failed hash.** Two checks run: the hash and the data. An objection cannot be undone, so only a hash mismatch triggers it. A failed data check stops the run. A local rehearsal showed why: an address case bug failed the data check, and the first version of the script objected to an honest delivery. The bug never reached mainnet.
+58. **The RPC client now backs off on HTTP 429.** The first mainnet run stopped on a rate limit, after delivery and before `release`. No funds were at risk, because a silent buyer pays the seller. The agent then released payment 7, and the run continued with `FROM_CALL=2`. The watcher also polls less often, and its passes cannot overlap.
