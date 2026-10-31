@@ -7,9 +7,9 @@
     "sellers": null
   },
   "testnet": {
-    "address": null,
-    "deployBlock": 0,
-    "deployTx": null,
+    "address": "0x2082c43eA0CCba46a12b62e425b40E798be16675",
+    "deployBlock": 69993005,
+    "deployTx": "0x4b920f933f5d3279ad0feb5545e3da45dbb8d86e8a32b23c8766b76628290327",
     "lastDemoBlock": 0,
     "sellers": null
   },

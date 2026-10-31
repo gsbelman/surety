@@ -88,6 +88,9 @@ sequenceDiagram
 - **The MVP objection rule trusts the buyer.** A seller with no arbiter loses the payment and the penalty on any objection, even after honest delivery. A dishonest buyer can abuse this. Sellers should name an arbiter. The agent demo shows the honest use: the agent objects only if the hash check fails.
 - **A proof hash is a commitment.** It proves what the seller posted, not that the work is good.
 - **A score can be washed.** A seller can pay itself from a second wallet. The bond size and payment history help, but they are not proof.
+- **A payment needs no seller consent.** Anyone can pay a registered seller. This locks free bond and forces the seller to deliver or call `decline`. A seller who ignores it loses the penalty.
+- **The USDC issuer can block the escrow.** If this happens, all funds in the contract stop until the issuer unblocks it. The contract handles a blocked recipient, but not a block on itself.
+- **This contract has no third-party audit.** See [`contracts/AUDIT.md`](contracts/AUDIT.md) for the Arc Studio review and its open items. Use small amounts.
 
 ## Deployments
 

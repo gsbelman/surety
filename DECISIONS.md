@@ -52,3 +52,13 @@ Judgment calls made during the overnight build, 2026-10-31.
 33. **The Pages project is `surety-arc`.** `surety.pages.dev` already serves a site outside this account, so the fallback name applies.
 34. **The production build holds no local node config.** The local network moved to `app/src/contract/local.ts`. Only dev builds and the agent import it. `scripts/publish.sh` stops before it deploys if the build contains local node config or a private key from `.env`.
 35. **Wrangler 4.156 needs two workarounds.** It refuses to run in the root of an npm workspace, so `scripts/publish.sh` deploys from `app/`. It also sends `pages project create` to Workers, so the first creation of the project needed `--force`. Later deploys do not need this flag.
+
+## Arc Studio review
+
+36. **SE-01 adopted: `resolve` now stops at the arbiter deadline.** Before the fix, an arbiter could release a payment after the deadline, and could front-run `settle`. This broke the refund that the README promises. The fix is one line, the ABI does not change, and the boundary matches `settle`. I read the diff and confirmed that Studio changed no other contract line.
+37. **SE-02 not adopted: the no-arbiter objection rule stays.** Studio rated it High and left the decision open. The rule is decision 8, and the seller opts in. The fix rejects a penalty with no arbiter, which removes the flow that the demo shows. README "Known limits" states the risk.
+38. **SE-03 not adopted: `pay` needs no seller consent.** An unsolicited payment can lock free bond and force a `decline`. The attentive seller loses gas only. A real fix changes the `pay` ABI, so it is too large for this MVP. README "Known limits" now states it.
+39. **SE-04 accepted.** If the issuer blocks the escrow address, all funds in the escrow stop until the issuer acts. The contract cannot fix this. The mainnet demo holds under 2 USDC.
+40. **The 59 Studio tests are adopted without change.** I read them for FFI, file access, forks, and outside addresses, and found none. All 117 tests pass locally.
+41. **The Studio testnet flow did not run.** The Studio faucet refused because the Circle account lacks an admin role. Studio offered to create a Circle API key in the account. I did not approve this, because it changes account credentials and the task did not ask for it. The testnet contract itself is deployed.
+42. **The testnet contract is the same code as the mainnet source.** Its runtime bytecode matches the local build, including the metadata hash. The only difference is the immutable token address. Studio deployed it through a factory, so the receipt shows no contract address. I copied the address from Studio into `deployments.json`.

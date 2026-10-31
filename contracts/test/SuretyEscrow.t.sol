@@ -438,6 +438,40 @@ contract SuretyEscrowTest is Test {
         escrow.resolve(id, false);
     }
 
+    function test_resolve_arbiterCannotActAfterDeadline() public {
+        address who = _arbitratedSeller();
+        uint256 id = _payAndDeliverTo(who);
+
+        vm.prank(buyer);
+        escrow.object(id);
+
+        // The deadline itself is still inside the arbiter window.
+        vm.warp(block.timestamp + escrow.ARBITER_WINDOW());
+        // One second later the arbiter loses authority, and settle refunds the buyer.
+        vm.warp(block.timestamp + 1);
+        vm.prank(arbiter);
+        vm.expectRevert(SuretyEscrow.TooLate.selector);
+        escrow.resolve(id, false);
+
+        uint256 buyerBefore = usdc.balanceOf(buyer);
+        escrow.settle(id);
+        assertEq(usdc.balanceOf(buyer), buyerBefore + AMOUNT + PENALTY);
+    }
+
+    function test_resolve_arbiterCanActOnDeadline() public {
+        address who = _arbitratedSeller();
+        uint256 id = _payAndDeliverTo(who);
+
+        vm.prank(buyer);
+        escrow.object(id);
+
+        vm.warp(block.timestamp + escrow.ARBITER_WINDOW());
+        uint256 sellerBefore = usdc.balanceOf(who);
+        vm.prank(arbiter);
+        escrow.resolve(id, false);
+        assertEq(usdc.balanceOf(who), sellerBefore + AMOUNT);
+    }
+
     function test_resolve_revertsWhenSellerHasNoArbiter() public {
         uint256 id = _pay();
         vm.prank(keeper);

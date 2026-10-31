@@ -283,12 +283,14 @@ contract SuretyEscrow is ReentrancyGuard {
         }
     }
 
-    /// @notice Decides an objection. Only the seller's arbiter can call this.
+    /// @notice Decides an objection. Only the seller's arbiter can call this, and only until the
+    /// arbiter deadline. After it, {settle} refunds the buyer plus the penalty.
     /// @param refundBuyer True to refund the buyer and pay the penalty. False to pay the seller.
     function resolve(uint256 id, bool refundBuyer) external nonReentrant {
         Payment storage p = _payments[id];
         if (msg.sender != _sellers[p.seller].arbiter) revert NotArbiter();
         if (p.status != Status.Disputed) revert WrongStatus();
+        if (block.timestamp > p.decideBy) revert TooLate();
 
         emit Resolved(id, msg.sender, refundBuyer);
         if (refundBuyer) {
