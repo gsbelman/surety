@@ -2,7 +2,7 @@ import { useState } from "react";
 import { isAddress, zeroAddress } from "viem";
 import { suretyAbi } from "../contract/abi";
 import { PaymentList } from "../components/PaymentList";
-import { Card, Field, WalletGate } from "../components/ui";
+import { Button, Card, Field, Notice, Skeletons, WalletGate } from "../components/ui";
 import { hashText, isAmount, parseUsdc } from "../lib/format";
 import { useSeller } from "../lib/hooks";
 import { useWallet } from "../lib/wallet";
@@ -12,15 +12,17 @@ const HOUR = 3_600;
 
 function OpenInbox() {
   const { account, network, write } = useWallet();
-  const { data: view } = useSeller(account);
+  const { data: view, failed } = useSeller(account);
 
-  if (!view) return null;
+  if (!view && failed) return <Notice tone="error">The RPC did not respond. Retrying.</Notice>;
+  if (!view) return <Skeletons count={1} height={44} label="Reading your inbox" />;
   if (view.stats.registered) {
-    return <p className="hint">Your inbox is open. Share your address, then reply below before each deadline.</p>;
+    return <Notice tone="good">Your inbox is open. Share your address, then reply below before each deadline.</Notice>;
   }
   return (
-    <button
-      className="primary"
+    <Button
+      tone="primary"
+      className="stretch"
       onClick={() =>
         write("Open my inbox", {
           address: network.address!,
@@ -31,7 +33,7 @@ function OpenInbox() {
       }
     >
       Open my inbox
-    </button>
+    </Button>
   );
 }
 
@@ -58,7 +60,14 @@ export function ReplyPage() {
           onChange={(e) => setRecipient(e.target.value.trim())}
           placeholder="0x…"
           spellCheck={false}
-          note={unknownRecipient ? "This address has not opened an inbox yet." : undefined}
+          warn
+          note={
+            unknownRecipient
+              ? "This address has not opened an inbox yet."
+              : recipient && !address
+                ? "Enter a full 0x address."
+                : undefined
+          }
         />
         <Field
           label="Your message"
@@ -72,15 +81,16 @@ export function ReplyPage() {
           <Field label="Reply within (hours)" value={hours} onChange={(e) => setHours(e.target.value)} inputMode="decimal" />
         </div>
         <WalletGate>
-          <button
-            className="primary"
+          <Button
+            tone="primary"
+            className="stretch"
             disabled={!address || unknownRecipient || !question || !isAmount(amount) || !Number(hours)}
             onClick={() =>
               pay(address!, parseUsdc(amount), Math.round(Number(hours) * HOUR), hashText(question))
             }
           >
             Pay for a reply
-          </button>
+          </Button>
         </WalletGate>
       </Card>
 

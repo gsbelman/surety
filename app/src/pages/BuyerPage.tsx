@@ -1,13 +1,16 @@
 import { useState } from "react";
+import { ShieldCheck } from "lucide-react";
 import { isAddress, type Address } from "viem";
 import { erc20Abi, suretyAbi } from "../contract/abi";
 import { USDC_ADDRESS } from "../contract/networks";
 import { PaymentList } from "../components/PaymentList";
 import { SellerCard } from "../components/SellerCard";
-import { Card, Field, WalletGate } from "../components/ui";
-import { hashText, isAmount, parseUsdc } from "../lib/format";
+import { Button, Card, Field, Notice, Skeletons, WalletGate } from "../components/ui";
+import { hashText, isAmount, parseUsdc, usdc } from "../lib/format";
 import { useSeller } from "../lib/hooks";
 import { useWallet } from "../lib/wallet";
+
+const BPS = 10_000n;
 
 /** Approves when needed, then pays. Each step is one wallet prompt. */
 export function usePay() {
@@ -48,8 +51,10 @@ export function BuyerPage() {
   const pay = usePay();
 
   const address = isAddress(seller) ? seller : null;
-  const { data: view } = useSeller(address);
+  const { data: view, failed } = useSeller(address);
   const demo = network.sellers;
+  const penaltyBps = view?.stats.registered ? view.stats.penaltyBps : null;
+  const refund = penaltyBps !== null && isAmount(amount) ? parseUsdc(amount) : null;
 
   return (
     <>
@@ -60,11 +65,27 @@ export function BuyerPage() {
           onChange={(e) => setSeller(e.target.value.trim())}
           placeholder="0x…"
           spellCheck={false}
+          warn
+          note={seller && !address ? "Enter a full 0x address." : undefined}
         />
         {demo && (
           <div className="chips">
-            <button onClick={() => setSeller(demo.honest)}>Demo: honest seller</button>
-            <button onClick={() => setSeller(demo.bad)}>Demo: bad seller</button>
+            <button className="chip" onClick={() => setSeller(demo.honest)}>
+              Demo: honest seller
+            </button>
+            <button className="chip bad" onClick={() => setSeller(demo.bad)}>
+              Demo: bad seller
+            </button>
+          </div>
+        )}
+        {address && network.address && !view && !failed && (
+          <div className="seller">
+            <Skeletons count={1} height={150} label="Reading the seller record" />
+          </div>
+        )}
+        {address && !view && failed && (
+          <div className="seller">
+            <Notice tone="error">The RPC did not respond. Retrying.</Notice>
           </div>
         )}
         {address && view && <SellerCard address={address} view={view} />}
@@ -90,14 +111,24 @@ export function BuyerPage() {
           placeholder="What you are paying for"
           note="Surety stores only the hash of this text."
         />
+        {refund !== null && penaltyBps !== null && (
+          <p className="guarantee">
+            <ShieldCheck size={17} aria-hidden="true" />
+            <span>
+              If this seller stays silent, you get {usdc(refund)} USDC back
+              {penaltyBps > 0 && ` plus ${usdc((refund * BigInt(penaltyBps)) / BPS)} USDC from the bond`}.
+            </span>
+          </p>
+        )}
         <WalletGate>
-          <button
-            className="primary"
+          <Button
+            tone="primary"
+            className="stretch"
             disabled={!address || !view?.stats.registered || !isAmount(amount) || !Number(windowMinutes)}
             onClick={() => pay(address!, parseUsdc(amount), Math.round(Number(windowMinutes) * 60), hashText(job))}
           >
             Pay through Surety
-          </button>
+          </Button>
         </WalletGate>
       </Card>
 

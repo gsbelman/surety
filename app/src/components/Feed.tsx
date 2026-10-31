@@ -1,7 +1,10 @@
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { Radio } from "lucide-react";
 import { shorten, usdc } from "../lib/format";
-import { useFeed, type FeedEvent } from "../lib/hooks";
+import { useFeed, usePoll, type FeedEvent } from "../lib/hooks";
 import { useWallet } from "../lib/wallet";
-import { Card, ExplorerLink } from "./ui";
+import { EASE } from "./motion";
+import { Card, Empty, ExplorerLink, Notice, Skeletons } from "./ui";
 
 function describe({ name, args }: FeedEvent) {
   const id = args.id !== undefined ? `#${args.id}` : "";
@@ -49,24 +52,56 @@ const TONE: Record<string, string> = {
   BondAdded: "good",
 };
 
-export function Feed() {
-  const { network } = useWallet();
-  const events = useFeed();
+function Live({ block }: { block: bigint }) {
+  const reduced = useReducedMotion();
   return (
-    <Card title="Live contract events">
-      {events === null && <p className="hint">Reading events…</p>}
-      {events?.length === 0 && (
-        <p className="hint">{network.address ? "No events yet." : "Events appear here after the contract goes live."}</p>
+    <span className="live">
+      <motion.span
+        className="live-dot"
+        animate={reduced ? undefined : { opacity: [1, 0.35, 1] }}
+        transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+      />
+      Block {block.toLocaleString("en-US")}
+    </span>
+  );
+}
+
+export function Feed() {
+  const { client, network } = useWallet();
+  const events = useFeed();
+  // useFeed hides RPC failures, so this read tells a quiet contract from a dead connection.
+  const head = usePoll(async () => (network.address ? client.getBlockNumber() : null), [network.key]);
+  const offline = head.failed;
+
+  return (
+    <Card title="Contract events" side={head.data && !offline ? <Live block={head.data} /> : undefined}>
+      {offline && <Notice tone="error">The RPC did not respond. This list can be out of date.</Notice>}
+      {!offline && events === null && <Skeletons count={5} height={26} label="Reading events" />}
+      {!offline && events?.length === 0 && (
+        <Empty icon={Radio} title={network.address ? "No events yet" : "Waiting for the contract"}>
+          {network.address
+            ? "Each payment, delivery, and refund appears here as it lands on the chain."
+            : "Events appear here after the contract goes live."}
+        </Empty>
       )}
-      <ol className="feed">
-        {events?.map((event) => (
-          <li key={event.key}>
-            <span className={`dot ${TONE[event.name] ?? ""}`} />
-            <span className="feed-text">{describe(event)}</span>
-            <ExplorerLink kind="tx" value={event.hash} label="tx" />
-          </li>
-        ))}
-      </ol>
+      {Boolean(events?.length) && (
+        <ol className="feed" tabIndex={0} aria-label="Recent contract events">
+          <AnimatePresence initial={false}>
+            {events?.map((event) => (
+              <motion.li
+                key={event.key}
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.45, ease: EASE }}
+              >
+                <span className={`dot ${TONE[event.name] ?? ""}`} />
+                <span className="feed-text">{describe(event)}</span>
+                <ExplorerLink kind="tx" value={event.hash} label="tx" />
+              </motion.li>
+            ))}
+          </AnimatePresence>
+        </ol>
+      )}
     </Card>
   );
 }
