@@ -1,0 +1,15 @@
+{
+  "name": "surety",
+  "private": true,
+  "type": "module",
+  "workspaces": ["app", "agent"],
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "dev": "npm run dev -w app",
+    "build": "npm run build -w app",
+    "test:contracts": "cd contracts && arc-forge test",
+    "sync-abi": "node scripts/sync-abi.mjs",
+    "demo": "npm run demo -w agent",
+    "seller": "npm run seller -w agent"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "mainnet": {
+    "address": null,
+    "deployBlock": 0,
+    "deployTx": null,
+    "lastDemoBlock": 0,
+    "sellers": null
+  },
+  "testnet": {
+    "address": null,
+    "deployBlock": 0,
+    "deployTx": null,
+    "lastDemoBlock": 0,
+    "sellers": null
+  },
+  "local": {
+    "address": null,
+    "deployBlock": 0,
+    "deployTx": null,
+    "lastDemoBlock": 0,
+    "sellers": null
+  }
+}
