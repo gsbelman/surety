@@ -1,0 +1,13 @@
+.env
+node_modules
+out
+cache
+dist
+broadcast/*/31337
+.env.*
+!.env.example
+.DS_Store
+.vercel
+.arc-studio
+*.log
+BRIEF.md
