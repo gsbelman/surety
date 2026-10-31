@@ -4,7 +4,7 @@ import { erc20Abi, suretyAbi } from "../contract/abi";
 import { USDC_ADDRESS } from "../contract/networks";
 import { PaymentList } from "../components/PaymentList";
 import { SellerCard } from "../components/SellerCard";
-import { Card, Field, WalletGate } from "../components/ui";
+import { Button, Card, Field, Notice, Skeletons, WalletGate } from "../components/ui";
 import { isAmount, parseUsdc } from "../lib/format";
 import { useSeller } from "../lib/hooks";
 import { useWallet } from "../lib/wallet";
@@ -41,8 +41,9 @@ function RegisterForm() {
         note="With no arbiter, an objection refunds the buyer and takes the penalty from your bond."
         spellCheck={false}
       />
-      <button
-        className="primary"
+      <Button
+        tone="primary"
+        className="stretch"
         disabled={arbiter !== "" && !isAddress(arbiter)}
         onClick={() =>
           write("Register", {
@@ -59,7 +60,7 @@ function RegisterForm() {
         }
       >
         Register
-      </button>
+      </Button>
     </Card>
   );
 }
@@ -101,12 +102,12 @@ function BondForm({ free }: { free: bigint }) {
     <Card title="Bond" hint="Open payments lock part of the bond. You can withdraw the rest at any time.">
       <Field label="Amount (USDC)" value={amount} onChange={(e) => setAmount(e.target.value)} inputMode="decimal" />
       <div className="actions">
-        <button className="primary" disabled={!isAmount(amount)} onClick={add}>
+        <Button tone="primary" disabled={!isAmount(amount)} onClick={add}>
           Post bond
-        </button>
-        <button disabled={!isAmount(amount) || free === 0n} onClick={withdraw}>
+        </Button>
+        <Button disabled={!isAmount(amount) || free === 0n} onClick={withdraw}>
           Withdraw
-        </button>
+        </Button>
       </div>
     </Card>
   );
@@ -114,11 +115,13 @@ function BondForm({ free }: { free: bigint }) {
 
 export function SellerPage() {
   const { account, network } = useWallet();
-  const { data: view } = useSeller(account);
+  const { data: view, failed } = useSeller(account);
 
   return (
     <>
       <WalletGate>
+        {!view && failed && <Notice tone="error">The RPC did not respond. Retrying.</Notice>}
+        {!view && !failed && <Skeletons count={2} height={150} label="Reading your seller record" />}
         {view && !view.stats.registered && <RegisterForm />}
         {view?.stats.registered && (
           <>

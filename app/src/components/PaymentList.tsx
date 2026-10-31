@@ -1,9 +1,15 @@
 import { useState } from "react";
+import { AnimatePresence, motion } from "motion/react";
+import { Clock, Inbox } from "lucide-react";
+import { formatUnits, zeroHash } from "viem";
 import { suretyAbi } from "../contract/abi";
+import { USDC_DECIMALS } from "../contract/networks";
 import { countdown, hashText, shorten, usdc } from "../lib/format";
 import { useNow, usePayments, type Payment } from "../lib/hooks";
 import { useWallet, type Call } from "../lib/wallet";
-import { Card } from "./ui";
+import { CountUp, EASE } from "./motion";
+import { paymentSteps, Timeline } from "./Timeline";
+import { Button, Card, Empty, Notice, Skeletons } from "./ui";
 
 const STATUS = ["None", "Awaiting delivery", "Delivered", "With arbiter", "Released", "Refunded"];
 
@@ -36,17 +42,41 @@ function PaymentRow({
     write(label, { ...contract, functionName, args } as Call);
 
   return (
-    <li className="payment">
+    <motion.li
+      className="payment"
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, ease: EASE }}
+      whileHover={{ y: -2 }}
+    >
       <div className="payment-head">
         <span className="id">#{id.toString()}</span>
-        <strong>{usdc(amount)} USDC</strong>
-        <span className={`badge s${status}`}>{STATUS[status]}</span>
+        <strong className="amount">
+          <CountUp value={Number(formatUnits(amount, USDC_DECIMALS))} text={usdc(amount)} />
+          <small>USDC</small>
+        </strong>
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.span
+            key={status}
+            className={`badge s${status}`}
+            initial={{ opacity: 0, scale: 0.85 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.85 }}
+            transition={{ duration: 0.2 }}
+          >
+            {STATUS[status]}
+          </motion.span>
+        </AnimatePresence>
         {open && (
           <span className={expired ? "timer expired" : "timer"}>
+            <Clock size={14} aria-hidden="true" />
             {expired ? "deadline passed" : countdown(Math.max(remaining, 0))}
           </span>
         )}
       </div>
+
+      <Timeline steps={paymentSteps(status, payment.proofHash !== zeroHash, expired)} />
+
       <div className="payment-meta">
         {isBuyer ? "to" : "from"} <code>{shorten(isBuyer ? payment.seller : payment.buyer)}</code>
         {open && penalty > 0n && <> · bond covers {usdc(penalty)}</>}
@@ -61,33 +91,36 @@ function PaymentRow({
               placeholder={proofLabel}
               aria-label={proofLabel}
             />
-            <button
-              className="primary"
+            <Button
+              tone="primary"
+              small
               disabled={!proof}
               onClick={() => act(`Deliver payment ${id}`, "deliver", [id, hashText(proof)])}
             >
               Deliver
-            </button>
-            <button onClick={() => act(`Decline payment ${id}`, "decline", [id])}>Decline</button>
+            </Button>
+            <Button small onClick={() => act(`Decline payment ${id}`, "decline", [id])}>
+              Decline
+            </Button>
           </>
         )}
         {isBuyer && status === 2 && !expired && (
           <>
-            <button className="primary" onClick={() => act(`Release payment ${id}`, "release", [id])}>
+            <Button tone="primary" small onClick={() => act(`Release payment ${id}`, "release", [id])}>
               Accept and release
-            </button>
-            <button className="danger" onClick={() => act(`Object to payment ${id}`, "object", [id])}>
+            </Button>
+            <Button tone="danger" small onClick={() => act(`Object to payment ${id}`, "object", [id])}>
               Object
-            </button>
+            </Button>
           </>
         )}
         {expired && (
-          <button className="primary" onClick={() => act(`Settle payment ${id}`, "settle", [id])}>
+          <Button tone="primary" small onClick={() => act(`Settle payment ${id}`, "settle", [id])}>
             {status === 2 ? "Settle: pay the seller" : "Settle: refund the buyer"}
-          </button>
+          </Button>
         )}
       </div>
-    </li>
+    </motion.li>
   );
 }
 
@@ -98,8 +131,14 @@ export function PaymentList({ title, proofLabel }: { title: string; proofLabel: 
 
   return (
     <Card title={title}>
-      {failed && !data && <p className="notice">The RPC did not respond. Retrying.</p>}
-      {data?.payments.length === 0 && <p className="hint">No payments yet.</p>}
+      {failed && !data && <Notice tone="error">The RPC did not respond. Retrying.</Notice>}
+      {failed && data && <Notice tone="warn">The RPC did not respond. This list can be out of date.</Notice>}
+      {!data && !failed && <Skeletons count={2} height={132} label="Loading payments" />}
+      {data?.payments.length === 0 && (
+        <Empty icon={Inbox} title="No payments yet">
+          A payment appears here after this wallet pays or gets paid.
+        </Empty>
+      )}
       <ul className="payments">
         {data?.payments.map((payment) => (
           <PaymentRow
