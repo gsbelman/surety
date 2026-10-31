@@ -1,0 +1,1 @@
+Extend surety/contracts/test with tests for anything the audit found and for any path the current suite misses. Include a test for each of these if it is missing: the dispute path where the arbiter is absent, a payment at the exact deadline, and two sellers with open payments at the same time. Run the full suite and report the result.

@@ -56,10 +56,16 @@ echo "SuretyEscrow: $ADDRESS"
 
 if [ -n "$EXPLORER_API" ]; then
   echo "==> Verify source on the explorer"
-  (cd contracts && "$FORGE" verify-contract "$ADDRESS" src/SuretyEscrow.sol:SuretyEscrow \
-    --rpc-url "$RPC" --verifier blockscout --verifier-url "$EXPLORER_API" \
-    --constructor-args "$("$CAST" abi-encode 'constructor(address)' "$USDC")" --watch) \
-    || echo "WARNING: verification failed. The deployment is fine. Rerun this script to retry."
+  VERIFY_ARGS=("$ADDRESS" src/SuretyEscrow.sol:SuretyEscrow --rpc-url "$RPC"
+    --verifier blockscout --verifier-url "$EXPLORER_API"
+    --constructor-args "$("$CAST" abi-encode 'constructor(address)' "$USDC")")
+  # The mainnet explorer sits behind a bot check, so a scripted upload can fail.
+  # A failure here does not affect the deployment or the demo.
+  if ! (cd contracts && "$FORGE" verify-contract "${VERIFY_ARGS[@]}" --watch); then
+    (cd contracts && "$FORGE" verify-contract "${VERIFY_ARGS[@]}" --show-standard-json-input > out/standard-input.json)
+    echo "WARNING: scripted verification failed. Upload contracts/out/standard-input.json by hand:"
+    echo "  ${EXPLORER_API%api/}contract-verification (compiler 0.8.30, standard JSON input)"
+  fi
 fi
 
 echo "==> Agent demo"
@@ -67,3 +73,10 @@ SURETY_NETWORK="$NETWORK" npm run --silent demo
 
 echo "==> Report"
 SURETY_NETWORK="$NETWORK" npm run --silent report -w agent
+
+if [ "$NETWORK" = mainnet ]; then
+  echo "==> Publish the addresses and hashes"
+  git add README.md SUBMISSION.md app/src/contract/deployments.json agent/runs/mainnet.json contracts/broadcast
+  git commit -q -m "Record mainnet deployment and demo transactions"
+  git push -q
+fi

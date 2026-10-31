@@ -3,7 +3,7 @@ node_modules
 out
 cache
 dist
-broadcast/*/31337
+contracts/broadcast/*/31337/
 .env.*
 !.env.example
 .DS_Store
@@ -12,3 +12,4 @@ broadcast/*/31337
 *.log
 BRIEF.md
 agent/runs/local.json
+studio-output

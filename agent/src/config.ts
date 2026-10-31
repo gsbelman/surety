@@ -41,7 +41,7 @@ export function requireEscrow(network: Network): Address {
 }
 
 export function publicClientFor(network: Network): PublicClient {
-  return createPublicClient({ chain: network.chain, transport: http(network.rpcUrl) });
+  return createPublicClient({ chain: network.chain, pollingInterval: 1_000, transport: http(network.rpcUrl) });
 }
 
 export type Actor = {
