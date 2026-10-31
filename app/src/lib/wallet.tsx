@@ -32,8 +32,12 @@ declare global {
 
 const USER_REJECTED = 4001;
 
-/** Local appears only in dev builds. */
-export const visibleNetworks = Object.values(networks).filter((n) => n.key !== "local" || import.meta.env.DEV);
+/** Local exists only in dev builds. The production build holds no local node config. */
+const available: Partial<Record<NetworkKey, Network>> = import.meta.env.DEV
+  ? { ...networks, local: (await import("../contract/local")).localNetwork }
+  : networks;
+
+export const visibleNetworks = Object.values(available);
 
 function initialNetwork(): NetworkKey {
   const stored = localStorage.getItem("surety.network") as NetworkKey | null;
@@ -81,7 +85,7 @@ export function WalletProvider({ children }: { children: ReactNode }) {
   const [tx, setTx] = useState<TxState | null>(null);
   const [revision, setRevision] = useState(0);
 
-  const network = networks[networkKey];
+  const network = available[networkKey]!;
   const provider = window.ethereum;
 
   const client = useMemo(

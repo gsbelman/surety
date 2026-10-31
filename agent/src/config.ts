@@ -25,12 +25,13 @@ import {
   type Network,
   type NetworkKey,
 } from "../../app/src/contract/networks";
+import { localNetwork } from "../../app/src/contract/local";
 
 export { erc20Abi, suretyAbi, USDC_ADDRESS };
 
 export function selectNetwork(): Network {
   const key = (process.env.SURETY_NETWORK ?? "local") as NetworkKey;
-  const network = networks[key];
+  const network = { ...networks, local: localNetwork }[key];
   if (!network) throw new Error(`Unknown network "${key}". Use mainnet, testnet, or local.`);
   return network;
 }

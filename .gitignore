@@ -8,6 +8,7 @@ contracts/broadcast/*/31337/
 !.env.example
 .DS_Store
 .vercel
+.wrangler
 .arc-studio
 *.log
 BRIEF.md

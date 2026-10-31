@@ -45,3 +45,10 @@ Judgment calls made during the overnight build, 2026-10-31.
 29. **`BRIEF.md` is not in the public repo.** It is an internal note. It stays on disk, ignored by git.
 30. **Git identity.** The repo uses `gsbelman@users.noreply.github.com`, so no private email goes public.
 31. **No existing wallet used.** The session had a connected wallet service. I did not touch it, per the brief.
+
+## Hosting
+
+32. **Hosting moved from Vercel to Cloudflare Pages.** This was Oscar's choice. It replaces decision 25. The live app is at https://surety-arc.pages.dev, and `scripts/publish.sh` rebuilds and redeploys it.
+33. **The Pages project is `surety-arc`.** `surety.pages.dev` already serves a site outside this account, so the fallback name applies.
+34. **The production build holds no local node config.** The local network moved to `app/src/contract/local.ts`. Only dev builds and the agent import it. `scripts/publish.sh` stops before it deploys if the build contains local node config or a private key from `.env`.
+35. **Wrangler 4.156 needs two workarounds.** It refuses to run in the root of an npm workspace, so `scripts/publish.sh` deploys from `app/`. It also sends `pages project create` to Workers, so the first creation of the project needed `--force`. Later deploys do not need this flag.

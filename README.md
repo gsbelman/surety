@@ -2,6 +2,8 @@
 
 Bonded, self-settling USDC payments for AI agents and humans on [Arc](https://docs.arc.io).
 
+**Live app:** https://surety-arc.pages.dev (a preview until the contract goes live on Arc mainnet)
+
 ## The problem
 
 Agents now pay for APIs per call with x402. These payments are final. If the API takes the money and returns nothing, the agent has no refund and no dispute path.
@@ -123,11 +125,11 @@ scripts/mainnet.sh              # deployer needs 2.40 USDC or more
 
 Each script stops before it spends anything if the deployer is short of funds. Each script reuses an existing deployment, funds the demo wallets, runs the agent demo, and writes the real addresses and hashes into this file.
 
-The app is a static site. To deploy it:
+The app is a static site on Cloudflare Pages. The build reads the contract address from `app/src/contract/deployments.json`, so run this after `scripts/mainnet.sh`:
 
 ```sh
-npx vercel login
-npx vercel --prod
+npx wrangler login
+scripts/publish.sh              # rebuilds the app and deploys it to surety-arc.pages.dev
 ```
 
 ## Repository
@@ -137,7 +139,7 @@ npx vercel --prod
 | `contracts/` | SuretyEscrow, Foundry tests, deploy script |
 | `app/` | Vite, React, and viem web app |
 | `agent/` | Mock paid API, buyer agent, and the demo run |
-| `scripts/` | One-command flows for local, testnet, mainnet, and Studio |
+| `scripts/` | One-command flows for local, testnet, mainnet, Studio, and publish |
 | `studio/` | The prompts for Arc Studio |
 
 ## License

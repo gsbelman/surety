@@ -33,7 +33,7 @@ We wrote the first version of SuretyEscrow and its Foundry tests in a local proj
 ## Links
 
 - Arc Studio project: [https://studio.arc.io/app/...]
-- Live app: [https://....vercel.app]
+- Live app: https://surety-arc.pages.dev
 - Public repository: https://github.com/gsbelman/surety
 - Video: [video link]
 - GitHub profile: https://github.com/gsbelman

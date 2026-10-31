@@ -1,10 +1,10 @@
 # Status
 
-Last update: 2026-10-31. Everything that can run without a login or funds is done and verified. **Mainnet, the Studio work, and the public link are not done.** They need the morning steps below.
+Last update: 2026-10-31. Everything that can run without a login or funds is done and verified. **Mainnet and the Studio work are not done.** They need the morning steps below.
 
 ## Summary
 
-The contract, tests, agent demo, app, and docs are finished and pushed to https://github.com/gsbelman/surety. They are verified on a local Arc node only. No mainnet transaction exists yet. Six morning steps remain.
+The contract, tests, agent demo, app, and docs are finished and pushed to https://github.com/gsbelman/surety. They are verified on a local Arc node only. No mainnet transaction exists yet. The app is live at https://surety-arc.pages.dev and shows "Contract not deployed yet" until step 5. Six morning steps remain.
 
 ## Morning steps, in order
 
@@ -12,8 +12,8 @@ The contract, tests, agent demo, app, and docs are finished and pushed to https:
 2. **Run the Studio work (about 30 min):** `cd ~/dev/surety && scripts/studio.sh`. Then follow "Bring results back" in [STUDIO_STEPS.md](STUDIO_STEPS.md).
 3. **Fund the deployer:** send 10 USDC on Arc mainnet to `0x84487909fe800Fdc610a2489D5b17496D6aa8a4f`.
 4. **Deploy and run the demo (about 4 min):** `scripts/mainnet.sh`
-5. **Publish the app:** `npx vercel login`, then `npx vercel --prod`.
-6. **Finish `SUBMISSION.md`:** fill in the three `[placeholder]` links, check the "How Arc Studio was used" paragraph, and record the video from the shot list.
+5. **Publish the app with the real address:** `scripts/publish.sh`
+6. **Finish `SUBMISSION.md`:** fill in the two `[placeholder]` links, check the "How Arc Studio was used" paragraph, and record the video from the shot list.
 
 If `scripts/mainnet.sh` prints a verification warning, upload `contracts/out/standard-input.json` at explorer.arc.io/contract-verification.
 
@@ -36,6 +36,7 @@ If `scripts/mainnet.sh` prints a verification warning, upload `contracts/out/sta
 | App flows covered | Register, bond in and out, pay, countdown, deliver, release, object, timeout settle, decoded contract error, pay-for-a-reply, live feed | Same browser test |
 | Mobile | No horizontal overflow at 390 px on each tab | Same browser test |
 | No wallet | Production build loads with no errors. Local network is hidden | `vite preview` with Playwright |
+| Public app | https://surety-arc.pages.dev shows the "Contract not deployed yet" state. Headless Chromium at desktop width and at 390 px found no console errors, no failed requests, and no horizontal overflow on each tab | `scripts/publish.sh`, Playwright run (not in the repo) |
 | Unfunded guard | `scripts/mainnet.sh` stops before any spend | Ran with a 0 USDC deployer |
 | Secrets | `.env` is mode 600 and ignored. No private key appears in git history | `git log --all -p`, searched for each key |
 | Clean clone | Fresh clone installs, builds, typechecks, and passes tests | `git clone`, `npm ci`, `npm run build`, `tsc --noEmit`, `arc-forge test` |
@@ -47,7 +48,6 @@ If `scripts/mainnet.sh` prints a verification warning, upload `contracts/out/sta
 | Studio work | `arc-studio whoami` reports no login | Step 1 |
 | Testnet deployment | The faucet needs reCAPTCHA | Step 2, with the Studio faucet |
 | Mainnet deployment, real transactions | The deployer has 0 USDC | Steps 3 and 4 |
-| Public app link | The Vercel CLI is not installed or logged in | Step 5 |
 | Explorer verification | Needs a deployment. The mainnet API returned 403 to `curl` | Step 4, with the manual fallback |
 
 ## Wallets

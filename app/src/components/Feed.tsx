@@ -1,5 +1,6 @@
 import { shorten, usdc } from "../lib/format";
 import { useFeed, type FeedEvent } from "../lib/hooks";
+import { useWallet } from "../lib/wallet";
 import { Card, ExplorerLink } from "./ui";
 
 function describe({ name, args }: FeedEvent) {
@@ -49,11 +50,14 @@ const TONE: Record<string, string> = {
 };
 
 export function Feed() {
+  const { network } = useWallet();
   const events = useFeed();
   return (
     <Card title="Live contract events">
       {events === null && <p className="hint">Reading events…</p>}
-      {events?.length === 0 && <p className="hint">No events yet.</p>}
+      {events?.length === 0 && (
+        <p className="hint">{network.address ? "No events yet." : "Events appear here after the contract goes live."}</p>
+      )}
       <ol className="feed">
         {events?.map((event) => (
           <li key={event.key}>

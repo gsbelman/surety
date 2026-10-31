@@ -1,6 +1,6 @@
-import { defineChain, type Address, type Chain, type Hash } from "viem";
+import type { Address, Chain, Hash } from "viem";
 import { arc, arcTestnet } from "viem/chains";
-import deployments from "./deployments.json";
+import { mainnet, testnet } from "./deployments.json";
 
 /** The ERC-20 interface of USDC on Arc. It uses 6 decimals. Native balances use 18. */
 export const USDC_ADDRESS: Address = "0x3600000000000000000000000000000000000000";
@@ -11,13 +11,6 @@ export const MIN_MAX_FEE_PER_GAS = 20_000_000_000n;
 
 /** The Arc RPC rejects log queries over wider ranges. */
 export const LOG_CHUNK_BLOCKS = 1_000n;
-
-const arcLocal = defineChain({
-  id: 31337,
-  name: "Arc Local",
-  nativeCurrency: { name: "USDC", symbol: "USDC", decimals: 18 },
-  rpcUrls: { default: { http: ["http://127.0.0.1:8545"] } },
-});
 
 type Deployment = {
   address: string | null;
@@ -42,8 +35,13 @@ export type Network = {
   sellers: { honest: Address; bad: Address } | null;
 };
 
-function network(key: NetworkKey, label: string, chain: Chain, explorer: string | null): Network {
-  const deployment: Deployment = deployments[key];
+export function network(
+  key: NetworkKey,
+  label: string,
+  chain: Chain,
+  explorer: string | null,
+  deployment: Deployment,
+): Network {
   return {
     key,
     label,
@@ -58,8 +56,8 @@ function network(key: NetworkKey, label: string, chain: Chain, explorer: string 
   };
 }
 
-export const networks: Record<NetworkKey, Network> = {
-  mainnet: network("mainnet", "Arc Mainnet", arc, "https://explorer.arc.io"),
-  testnet: network("testnet", "Arc Testnet", arcTestnet, "https://explorer.testnet.arc.io"),
-  local: network("local", "Arc Local", arcLocal, null),
+/** The public networks. The local node lives in local.ts, so the production build never imports it. */
+export const networks = {
+  mainnet: network("mainnet", "Arc Mainnet", arc, "https://explorer.arc.io", mainnet),
+  testnet: network("testnet", "Arc Testnet", arcTestnet, "https://explorer.testnet.arc.io", testnet),
 };

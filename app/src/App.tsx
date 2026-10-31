@@ -53,6 +53,18 @@ function Header() {
   );
 }
 
+function NotDeployed() {
+  const { network } = useWallet();
+  if (network.address) return null;
+
+  return (
+    <div className="pending" role="status">
+      <strong>Contract not deployed yet.</strong>
+      <span>Coming to Arc mainnet. Until then, this app is a preview and cannot send transactions.</span>
+    </div>
+  );
+}
+
 function TxBar() {
   const { tx, clearTx } = useWallet();
   if (!tx) return null;
@@ -127,6 +139,7 @@ export function App() {
         )}
       </div>
 
+      <NotDeployed />
       <TxBar />
       <ClaimBanner />
 
